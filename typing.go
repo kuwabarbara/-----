@@ -3,14 +3,13 @@ package main
 //https://www.jamsystem.com/ancdic/index.html
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
 	//"html"
-	"io/ioutil"
 	"net/http"
 	//"time"
+	json "github.com/takoyaki-3/go-json"
 )
 
 const logFile = "logs" // データの保存先 --- (*1)
@@ -53,27 +52,16 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 	//urlに余分なものがついていたらそれで分ける
 	if r.URL.Path[1:] != "favicon.ico" {
 		fmt.Println("logs" + r.URL.Path[1:] + ".json")
-		bytes, err := ioutil.ReadFile("logs" + r.URL.Path[1:] + ".json")
 
-		if err != nil {
-			//fmt.Println(err)
-			fmt.Println("kuwakuwa")
-		}
-		if err == nil {
-			//fmt.Println(string(bytes))
-
-			b := []byte(string(bytes))
-			var p Log
-			if err := json.Unmarshal(b, &p); err != nil {
-				panic(err)
-			}
-
+		var p []Log
+		if err := json.LoadFromPath("logs" + r.URL.Path[1:] + ".json", &p);err==nil{
+			// fmt.Println("まだファイルないよ")
 			fmt.Printf("%+v\n", p)
-			//fmt.Println(p)
 
 			fmt.Println(score)
-			w.Write([]byte(getFormLog(p, r.URL.Path[1:])))
-
+			w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
+		} else {
+			fmt.Println("まだファイルないよ",err)
 		}
 	}
 }
@@ -88,7 +76,7 @@ func writegateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Print("aaaaaa")
 	fmt.Print(log.Name)
-	saveLogs2(log, log.Name)
+	addLog(log, log.Name)
 	http.Redirect(w, r, "/", 302) // リダイレクト --- (*13)
 }
 
@@ -132,7 +120,7 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 		log.Name = "名無し"
 	}
 
-	saveLogs2(log, r.Form["logname"][0]) // 保存
+	addLog(log, r.Form["logname"][0]) // 保存
 
 	score += 10
 
@@ -148,7 +136,8 @@ func getFormGate() string {
 }
 
 // logの内容を読み込んで表示する
-func getFormLog(log Log, namae string) string {
+func getFormLogs(logs []Log, namae string) string {
+	log := logs[len(logs)-1]
 	return "<div>" + namae + "aaaa" + log.Name + "xxx" + strconv.Itoa(score) + "aaa </div>" +
 		"<div><form action='/writelog' method='POST'>" +
 		"<input type='hidden' name='logname' value='" + namae + "'>" +
@@ -157,28 +146,19 @@ func getFormLog(log Log, namae string) string {
 		"</form></div><hr>"
 }
 
-func saveLogs(logs []Log, namae string) {
-	// JSONにエンコード
-	bytes, _ := json.Marshal(logs)
-	// ファイルへ書き込む
-	ioutil.WriteFile(logFile+namae+".json", bytes, 0644)
-}
+// func saveLogs(logs []Log, namae string) {
+// 	json.DumpToFile(&logs, logFile+namae+".json")
+// }
 
-func saveLogs2(log Log, namae string) {
-	// JSONにエンコード
-	bytes, _ := json.Marshal(log)
-	// ファイルへ書き込む
-	ioutil.WriteFile(logFile+namae+".json", bytes, 0644)
+func addLog(log Log, namae string) {
+	var logs []Log
+	json.LoadFromPath(logFile+namae+".json",&logs)
+	logs = append(logs, log)
+	json.DumpToFile(logs,logFile+namae+".json")
 }
 
 func loadLogs2(namae string) []Log {
-	// ファイルを開く
-	text, err := ioutil.ReadFile(logFile + namae + ".json")
-	if err != nil {
-		return make([]Log, 0)
-	}
-	// JSONをパース --- (*16)
 	var logs []Log
-	json.Unmarshal([]byte(text), &logs)
+	json.LoadFromPath(logFile + namae + ".json", &logs)
 	return logs
 }
