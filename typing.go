@@ -54,14 +54,14 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("logs" + r.URL.Path[1:] + ".json")
 
 		var p []Log
-		if err := json.LoadFromPath("logs" + r.URL.Path[1:] + ".json", &p);err==nil{
+		if err := json.LoadFromPath("logs"+r.URL.Path[1:]+".json", &p); err == nil {
 			// fmt.Println("まだファイルないよ")
 			fmt.Printf("%+v\n", p)
 
 			fmt.Println(score)
 			w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
 		} else {
-			fmt.Println("まだファイルないよ",err)
+			fmt.Println("まだファイルないよ", err)
 		}
 	}
 }
@@ -95,25 +95,6 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("びびびびい")
 
-	/*var log Log
-	log.Name = r.Form["logname"][0]
-	log.Body = r.Form["name"][0]
-
-	fmt.Println("ぎゃぎゃがｙ")
-
-	if log.Name == "" {
-		log.Name = "名無し"
-	}
-	logs := loadLogs2(r.Form["logname"][0]) // 既存のデータを読み出し --- (*11)
-
-	fmt.Println("じゃじゃじゃっじゃ")
-
-	log.ID = len(logs) + 1
-	log.CTime = time.Now().Unix()
-	logs = append(logs, log)             // 追記 --- (*12)
-	saveLogs(logs, r.Form["logname"][0]) // 保存
-	*/
-
 	var log Log
 	log.Name = r.Form["name"][0]
 	if log.Name == "" {
@@ -146,19 +127,15 @@ func getFormLogs(logs []Log, namae string) string {
 		"</form></div><hr>"
 }
 
-// func saveLogs(logs []Log, namae string) {
-// 	json.DumpToFile(&logs, logFile+namae+".json")
-// }
-
 func addLog(log Log, namae string) {
 	var logs []Log
-	json.LoadFromPath(logFile+namae+".json",&logs)
+	json.LoadFromPath(logFile+namae+".json", &logs)
 	logs = append(logs, log)
-	json.DumpToFile(logs,logFile+namae+".json")
+	json.DumpToFile(logs, logFile+namae+".json")
 }
 
 func loadLogs2(namae string) []Log {
 	var logs []Log
-	json.LoadFromPath(logFile + namae + ".json", &logs)
+	json.LoadFromPath(logFile+namae+".json", &logs)
 	return logs
 }
