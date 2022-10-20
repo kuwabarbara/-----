@@ -55,16 +55,15 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-		var p []Log
-		if err := json.LoadFromPath("logs"+r.URL.Path[1:]+".json", &p); err == nil {
-			// fmt.Println("まだファイルないよ")
-			fmt.Printf("%+v\n", p)
+	var p []Log
+	if err := json.LoadFromPath("logs"+r.URL.Path[1:]+".json", &p); err == nil {
+		// fmt.Println("まだファイルないよ")
+		fmt.Printf("%+v\n", p)
 
-			fmt.Println(score)
-			w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
-		} else {
-			fmt.Println("まだファイルないよ", err)
-		}
+		fmt.Println(score)
+		w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
+	} else {
+		fmt.Println("まだファイルないよ", err)
 	}
 
 	fmt.Printf("%+v\n", p)

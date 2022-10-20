@@ -1,0 +1,30 @@
+[33mcommit 0185fe6faaa4ddac612ab3272118485f9b14cbba[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Merge: eed00cc 89123e3
+Author: kuwabarbarac:/Users/nobua/file/tweet/tweetList.py <nobuaki.kuwabara3@gmail.com>
+Date:   Thu Oct 20 23:19:03 2022 +0900
+
+    Merge branch 'master' of https://github.com/kuwabarbara/-----
+
+[33mcommit eed00cc45ac2c2f4c8fa4742d033aa3debe42559[m
+Author: kuwabarbarac:/Users/nobua/file/tweet/tweetList.py <nobuaki.kuwabara3@gmail.com>
+Date:   Thu Oct 20 23:03:00 2022 +0900
+
+    余計なコメント文を削除
+
+[33mcommit 89123e3f3970290b5348ebe6d126bee639ae510f[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: takoyaki-3 <mail@takoyaki3.com>
+Date:   Mon Oct 17 19:41:54 2022 +0900
+
+    多段かっこを排除
+
+[33mcommit 3b6d980ebf2cd4698a57ee5aac151da914357854[m
+Author: takoyaki-3 <mail@takoyaki3.com>
+Date:   Mon Oct 17 19:32:50 2022 +0900
+
+    配列に変更
+
+[33mcommit 746d038b74698f3e8d184eb26947935f38c792b5[m
+Author: kuwabarbarac:/Users/nobua/file/tweet/tweetList.py <nobuaki.kuwabara3@gmail.com>
+Date:   Mon Oct 17 19:05:55 2022 +0900
+
+    aaa
