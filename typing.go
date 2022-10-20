@@ -47,11 +47,13 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 	//urlに余分なものがついてない場合
 	if r.URL.Path == "/" {
 		w.Write([]byte(getFormGate()))
+		return
 	}
 
-	//urlに余分なものがついていたらそれで分ける
-	if r.URL.Path[1:] != "favicon.ico" {
-		fmt.Println("logs" + r.URL.Path[1:] + ".json")
+	// favicon.icoだったら読み込まれたらなにもしない
+	if r.URL.Path[1:] == "favicon.ico" {
+		return
+	}
 
 		var p []Log
 		if err := json.LoadFromPath("logs"+r.URL.Path[1:]+".json", &p); err == nil {
@@ -64,6 +66,10 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("まだファイルないよ", err)
 		}
 	}
+
+	fmt.Printf("%+v\n", p)
+	fmt.Println(score)
+	w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
 }
 
 // gateで書き込まれた内容を処理する
