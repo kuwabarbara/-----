@@ -130,13 +130,14 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 func writegateHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() // フォームを解析 --- (*10)
 	var log Log
-	log.Name = r.Form["name"][0]
+	//log.Name = r.Form["name"][0]
+	log.Name = "一番最初のlog"
 	if log.Name == "" {
 		log.Name = "名無し"
 	}
 	fmt.Print("aaaaaa")
 	fmt.Print(log.Name)
-	addLog(log, log.Name)
+	addLog(log, r.Form["name"][0])
 	http.Redirect(w, r, "/", 302) // リダイレクト --- (*13)
 }
 
@@ -162,7 +163,6 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result = "aaa"
 	fmt.Println(result)
 
 	fmt.Println("びびびびい")
@@ -170,6 +170,7 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	//書き込まれた内容をjsonファイルに書き込む
 	var log Log
 	log.Name = r.Form["name"][0]
+	log.Body=result
 	if log.Name == "" {
 		log.Name = "名無し"
 	}
@@ -192,7 +193,7 @@ func getFormGate() string {
 // logの内容を読み込んで表示する
 func getFormLogs(logs []Log, namae string) string {
 	log := logs[len(logs)-1]
-	return "<div>" + namae + "aaaa" + log.Name + "xxx" + strconv.Itoa(score) + "aaa </div>" +
+	return "<div>" + namae + "    " + log.Name + "   " +log.Body+ "  "+strconv.Itoa(score) + "    </div>" +
 		"<div><form action='/writelog' method='POST'>" +
 		"<input type='hidden' name='logname' value='" + namae + "'>" +
 		"名前: <input type='text' name='name'><br>" +
