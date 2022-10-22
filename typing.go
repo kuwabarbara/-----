@@ -3,13 +3,19 @@ package main
 //https://www.jamsystem.com/ancdic/index.html
 
 import (
+	"encoding/csv"
 	"fmt"
+	"io"
+	"os"
+
 	"strconv"
 
 	//"html"
 	"net/http"
 	//"time"
 	json "github.com/takoyaki-3/go-json"
+	"golang.org/x/text/encoding/japanese"
+	"golang.org/x/text/transform"
 )
 
 const logFile = "logs" // データの保存先 --- (*1)
@@ -26,6 +32,18 @@ type Log struct {
 
 // メインプログラム - サーバーを起動する --- (*3)
 func main() {
+	/*csvFile, _ := os.Open("kuwa/f.csv")
+	reader := csv.NewReader(transform.NewReader(csvFile, japanese.ShiftJIS.NewDecoder()))
+	//reader := csv.NewReader(csvFile)
+
+	for {
+		line, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		fmt.Println(line[0] + " " + line[1])
+	}*/
+
 	score = 0
 
 	println("server - http://localhost:8888")
@@ -37,6 +55,43 @@ func main() {
 	//http.HandleFunc("/write", writeHandler)
 	// サーバーを起動 --- (*5)
 	http.ListenAndServe(":8888", nil)
+}
+
+// 辞書に乗っているか調べる
+func searchDictionary(name string) (bool, string) {
+	small_alphabet := [...]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+
+	big_alphabet := [...]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+	if name == "" {
+		return false, "名前の部分が空白になっているね！"
+	}
+
+	for i := 0; i < len(small_alphabet); i++ {
+		if string(name[0]) == small_alphabet[i] || string(name[0]) == big_alphabet[i] {
+			csvFile, _ := os.Open("kuwa/" + small_alphabet[i] + ".csv")
+			reader := csv.NewReader(transform.NewReader(csvFile, japanese.ShiftJIS.NewDecoder()))
+			//reader := csv.NewReader(csvFile)
+
+			for {
+				line, err := reader.Read()
+				if err == io.EOF {
+					break
+				}
+				if name == line[0] {
+					fmt.Println("発見")
+					fmt.Println(line[1])
+					return true, line[1]
+				}
+
+				//fmt.Println(line[0] + " " + line[1])
+
+			}
+		}
+	}
+
+	fmt.Println("見つからなかった")
+	return false, "入力した単語は検索できなかったな！"
+
 }
 
 // 最初の画面
@@ -66,9 +121,9 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("まだファイルないよ", err)
 	}
 
-	fmt.Printf("%+v\n", p)
-	fmt.Println(score)
-	w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
+	//fmt.Printf("%+v\n", p)
+	//fmt.Println(score)
+	//w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
 }
 
 // gateで書き込まれた内容を処理する
@@ -96,10 +151,23 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Print("いｄｓ" + r.Form["name"][0] + "あｊｓｊ")
 	//fmt.Print("saasasa" + r.URL.Path[1:] + "fefsf")
 
-	//書き込まれた内容をjsonファイルに書き込む
+	var search_flag bool
+	var result string
+
+	search_flag, result = searchDictionary(r.Form["name"][0])
+
+	//もし検索が発見できなかったら
+	if search_flag == false {
+		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		return
+	}
+
+	result = "aaa"
+	fmt.Println(result)
 
 	fmt.Println("びびびびい")
 
+	//書き込まれた内容をjsonファイルに書き込む
 	var log Log
 	log.Name = r.Form["name"][0]
 	if log.Name == "" {
