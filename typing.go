@@ -112,10 +112,20 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 
 	var p []Log
 	if err := json.LoadFromPath("logs"+r.URL.Path[1:]+".json", &p); err == nil {
-		// fmt.Println("まだファイルないよ")
-		fmt.Printf("%+v\n", p)
-
+		//fmt.Printf("%+v\n", p)
 		fmt.Println(score)
+		
+		/*var last string //最後に入力された内容
+		log := p[len(p)-1]
+		last = log.Name
+
+		fmt.Println(last)
+
+		//しりとりになっていなかったら何もしない
+		if last != "一番最初のlog" && last[len(last)-1] != r.Form["name"][0][0] {
+			return
+		}*/
+
 		w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
 	} else {
 		fmt.Println("まだファイルないよ", err)
@@ -147,10 +157,27 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 
 	//lognameがlogのファイルの名前
 	//nameが入力内容
-
 	fmt.Print("いｄｓ" + r.Form["logname"][0] + "あｊｓｊ")
 	fmt.Print("いｄｓ" + r.Form["name"][0] + "あｊｓｊ")
 	//fmt.Print("saasasa" + r.URL.Path[1:] + "fefsf")
+
+	//現在のlogを取得する
+	var last string //最後に入力された内容
+	var p []Log
+	if err := json.LoadFromPath("logs"+r.Form["logname"][0]+".json", &p); err == nil {
+		log := p[len(p)-1]
+		last = log.Name
+	} else {
+		fmt.Println("このjsonファイル開けないよ", err)
+		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		return
+	}
+
+	//打ち込んだ文字と前回打ち込んだ文字とでしりとりになっているか
+	if last != "一番最初のlog" && last[len(last)-1] != r.Form["name"][0][0] {
+		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		return
+	}
 
 	var search_flag bool
 	var result string
@@ -170,7 +197,7 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	//書き込まれた内容をjsonファイルに書き込む
 	var log Log
 	log.Name = r.Form["name"][0]
-	log.Body=result
+	log.Body = result
 	if log.Name == "" {
 		log.Name = "名無し"
 	}
@@ -193,7 +220,7 @@ func getFormGate() string {
 // logの内容を読み込んで表示する
 func getFormLogs(logs []Log, namae string) string {
 	log := logs[len(logs)-1]
-	return "<div>" + namae + "    " + log.Name + "   " +log.Body+ "  "+strconv.Itoa(score) + "    </div>" +
+	return "<div>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "    </div>" +
 		"<div><form action='/writelog' method='POST'>" +
 		"<input type='hidden' name='logname' value='" + namae + "'>" +
 		"名前: <input type='text' name='name'><br>" +
