@@ -32,17 +32,6 @@ type Log struct {
 
 // メインプログラム - サーバーを起動する --- (*3)
 func main() {
-	/*csvFile, _ := os.Open("kuwa/f.csv")
-	reader := csv.NewReader(transform.NewReader(csvFile, japanese.ShiftJIS.NewDecoder()))
-	//reader := csv.NewReader(csvFile)
-
-	for {
-		line, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		fmt.Println(line[0] + " " + line[1])
-	}*/
 
 	score = 0
 
@@ -114,26 +103,12 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.LoadFromPath("logs"+r.URL.Path[1:]+".json", &p); err == nil {
 		//fmt.Printf("%+v\n", p)
 		fmt.Println(score)
-		
-		/*var last string //最後に入力された内容
-		log := p[len(p)-1]
-		last = log.Name
-
-		fmt.Println(last)
-
-		//しりとりになっていなかったら何もしない
-		if last != "一番最初のlog" && last[len(last)-1] != r.Form["name"][0][0] {
-			return
-		}*/
 
 		w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
 	} else {
 		fmt.Println("まだファイルないよ", err)
 	}
 
-	//fmt.Printf("%+v\n", p)
-	//fmt.Println(score)
-	//w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
 }
 
 // gateで書き込まれた内容を処理する
