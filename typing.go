@@ -7,6 +7,8 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"math/rand"
+	"time"
 
 	//"log"
 	"os"
@@ -37,7 +39,6 @@ type Log struct {
 
 // メインプログラム - サーバーを起動する --- (*3)
 func main() {
-
 	score = 0
 
 	println("server - http://localhost:8888")
@@ -139,9 +140,12 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//log.Fatal("Cookie: ", err)
 		//クッキーが存在しなかった場合作成
+		rand.Seed(time.Now().UnixNano())
+		result := rand.Int() // ランダムな整数を生成します。
+		fmt.Println("らんすう"+strconv.Itoa(result))
 		cookie := &http.Cookie{
 			Name:  "hoge",
-			Value: "ransu", //ここで本当は乱数を入れたい
+			Value: strconv.Itoa(result),
 		}
 		http.SetCookie(w, cookie)
 	} else {
@@ -204,6 +208,8 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	v := cookiecookie2.Value
+
+	fmt.Println("かかかか" + v)
 
 	var log Log
 	log.Name = r.Form["name"][0]
