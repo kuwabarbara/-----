@@ -3,10 +3,14 @@ package main
 //https://www.jamsystem.com/ancdic/index.html
 
 import (
+	//"encoding/base64"
 	"encoding/csv"
 	"fmt"
 	"io"
+
+	//"log"
 	"os"
+	//"text/template"
 
 	"strconv"
 
@@ -27,6 +31,7 @@ type Log struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`
 	Body  string `json:"body"`
+	Kukki string `json:"kukki"`
 	CTime int64  `json:"ctime"`
 }
 
@@ -128,6 +133,25 @@ func writegateHandler(w http.ResponseWriter, r *http.Request) {
 
 // 書き込まれた内容を処理する
 func writelogHandler(w http.ResponseWriter, r *http.Request) {
+	//クッキーを設定
+	//そのためにまずクッキーを取得
+	cookiecookie, err := r.Cookie("hoge")
+	if err != nil {
+		//log.Fatal("Cookie: ", err)
+		//クッキーが存在しなかった場合作成
+		cookie := &http.Cookie{
+			Name:  "hoge",
+			Value: "ransu", //ここで本当は乱数を入れたい
+		}
+		http.SetCookie(w, cookie)
+	} else {
+		//クッキーは存在している
+		fmt.Println("くわー！")
+		fmt.Println(cookiecookie.Name)
+		//http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		//return
+	}
+
 	r.ParseForm() // フォームを解析 --- (*10)
 
 	//lognameがlogのファイルの名前
@@ -170,9 +194,21 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("びびびびい")
 
 	//書き込まれた内容をjsonファイルに書き込む
+
+	//クッキーの取得を行う
+	cookiecookie2, err := r.Cookie("hoge")
+	if err != nil {
+		//log.Fatal("Cookie: ", err)
+		fmt.Println("クッキーが取得できない")
+		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		return
+	}
+	v := cookiecookie2.Value
+
 	var log Log
 	log.Name = r.Form["name"][0]
 	log.Body = result
+	log.Kukki = v
 	if log.Name == "" {
 		log.Name = "名無し"
 	}
