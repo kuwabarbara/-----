@@ -105,12 +105,24 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//クッキーを取得
+	var user string //乱数で作成したユーザーの値を記憶
+	cookiecookie, err := r.Cookie("hoge")
+	if err != nil {
+		fmt.Println("クッキーは存在しない")
+	} else {
+		//クッキーは存在している
+		//fmt.Println("くわー！")
+		//fmt.Println(cookiecookie.Name)
+		user = cookiecookie.Value
+	}
+
 	var p []Log
 	if err := json.LoadFromPath("logs"+r.URL.Path[1:]+".json", &p); err == nil {
 		//fmt.Printf("%+v\n", p)
 		fmt.Println(score)
 
-		w.Write([]byte(getFormLogs(p, r.URL.Path[1:])))
+		w.Write([]byte(getFormLogs(p, r.URL.Path[1:], user)))
 	} else {
 		fmt.Println("まだファイルないよ", err)
 	}
@@ -142,7 +154,7 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 		//クッキーが存在しなかった場合作成
 		rand.Seed(time.Now().UnixNano())
 		result := rand.Int() // ランダムな整数を生成します。
-		fmt.Println("らんすう"+strconv.Itoa(result))
+		fmt.Println("らんすう" + strconv.Itoa(result))
 		cookie := &http.Cookie{
 			Name:  "hoge",
 			Value: strconv.Itoa(result),
@@ -165,11 +177,13 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	//fmt.Print("saasasa" + r.URL.Path[1:] + "fefsf")
 
 	//現在のlogを取得する
-	var last string //最後に入力された内容
+	var last string     //最後に入力された内容
+	//var lastUser string //最後に入力したuserを記憶
 	var p []Log
 	if err := json.LoadFromPath("logs"+r.Form["logname"][0]+".json", &p); err == nil {
 		log := p[len(p)-1]
 		last = log.Name
+		//lastUser = log.Kukki
 	} else {
 		fmt.Println("このjsonファイル開けないよ", err)
 		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
@@ -211,6 +225,13 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("かかかか" + v)
 
+	/*//最後に入力したユーザーが自分だった場合
+	if v == lastUser {
+		fmt.Println("しりとりは同じ人が二回連続では入力できない")
+		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		return
+	}*/
+
 	var log Log
 	log.Name = r.Form["name"][0]
 	log.Body = result
@@ -235,9 +256,17 @@ func getFormGate() string {
 }
 
 // logの内容を読み込んで表示する
-func getFormLogs(logs []Log, namae string) string {
+func getFormLogs(logs []Log, namae string, user string) string {
+	//いままでユーザがしりとりで入力した文字数を数えて点数に保存
+	tensu := 0
+	for i := 0; i < len(logs); i++ {
+		if user == logs[i].Kukki {
+			tensu += len(logs[i].Name)
+		}
+	}
+
 	log := logs[len(logs)-1]
-	return "<div>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "    </div>" +
+	return "<div>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "  点数は" + strconv.Itoa(tensu) + "    </div>" +
 		"<div><form action='/writelog' method='POST'>" +
 		"<input type='hidden' name='logname' value='" + namae + "'>" +
 		"名前: <input type='text' name='name'><br>" +
