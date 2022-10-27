@@ -178,12 +178,12 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 
 	//現在のlogを取得する
 	var last string     //最後に入力された内容
-	//var lastUser string //最後に入力したuserを記憶
+	var lastUser string //最後に入力したuserを記憶
 	var p []Log
 	if err := json.LoadFromPath("logs"+r.Form["logname"][0]+".json", &p); err == nil {
 		log := p[len(p)-1]
 		last = log.Name
-		//lastUser = log.Kukki
+		lastUser = log.Kukki
 	} else {
 		fmt.Println("このjsonファイル開けないよ", err)
 		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
@@ -225,12 +225,12 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("かかかか" + v)
 
-	/*//最後に入力したユーザーが自分だった場合
+	//最後に入力したユーザーが自分だった場合
 	if v == lastUser {
 		fmt.Println("しりとりは同じ人が二回連続では入力できない")
 		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
 		return
-	}*/
+	}
 
 	var log Log
 	log.Name = r.Form["name"][0]
