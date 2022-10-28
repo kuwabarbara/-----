@@ -270,8 +270,10 @@ func getFormLogs(logs []Log, namae string, user string) string {
 		"<div><form action='/writelog' method='POST'>" +
 		"<input type='hidden' name='logname' value='" + namae + "'>" +
 		"名前: <input type='text' name='name'><br>" +
-		"<input type='submit' value='書込'>" +
-		"</form></div><hr>"
+		"<input type='submit' value='書込'>" +"<p id=sample></p>"+
+		//下記の部分をjsonの中を見て最後の入力を表示するようにしたい
+		//"</form></div><hr>"+"<script>var currentTime = new Date();setTimeout(function(){document.getElementById('sample').innerHTML=currentTime.getSeconds();},500);</script>"
+		" <script> setInterval(() => {var currentTime = new Date();document.getElementById('sample').innerHTML=currentTime.getSeconds();}, 500); </script>"
 }
 
 func addLog(log Log, namae string) {
