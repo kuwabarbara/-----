@@ -46,6 +46,7 @@ func main() {
 	http.HandleFunc("/", gateHandler)
 	http.HandleFunc("/writegate", writegateHandler)
 	http.HandleFunc("/writelog", writelogHandler)
+	http.HandleFunc("/writelog_succession", writelog_successionHandler)
 	//http.HandleFunc("/show", showHandler)
 	//http.HandleFunc("/write", writeHandler)
 	// サーバーを起動 --- (*5)
@@ -105,22 +106,22 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//クッキーを取得
+	var user string //乱数で作成したユーザーの値を記憶
+	cookiecookie, err := r.Cookie("hoge")
+	if err != nil {
+		fmt.Println("クッキーは存在しない")
+	} else {
+		//クッキーは存在している
+		//fmt.Println("くわー！")
+		//fmt.Println(cookiecookie.Name)
+		user = cookiecookie.Value
+	}
+
 
 	//  /normalだった場合
-
 	if r.URL.Path[1:7]=="normal"{
 		fmt.Println("のーまる")
-		//クッキーを取得
-		var user string //乱数で作成したユーザーの値を記憶
-		cookiecookie, err := r.Cookie("hoge")
-		if err != nil {
-			fmt.Println("クッキーは存在しない")
-		} else {
-			//クッキーは存在している
-			//fmt.Println("くわー！")
-			//fmt.Println(cookiecookie.Name)
-			user = cookiecookie.Value
-		}
 		var p []Log
 		if err := json.LoadFromPath("logs"+r.URL.Path[8:]+".json", &p); err == nil {
 			//fmt.Printf("%+v\n", p)
@@ -130,7 +131,24 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			fmt.Println("まだファイルないよ", err)
 		}
+		return
 	}
+
+	//  /successionだった場合  連続で同じユーザーが入力できるモード
+	if r.URL.Path[1:11]=="succession"{
+		fmt.Println("れんぞく")
+		var p []Log
+		if err := json.LoadFromPath("logs"+r.URL.Path[12:]+".json", &p); err == nil {
+			//fmt.Printf("%+v\n", p)
+			fmt.Println(score)
+
+			w.Write([]byte(getFormLogs_succession(p, r.URL.Path[12:], user)))
+		} else {
+			fmt.Println("まだファイルないよ", err)
+		}
+		return
+	}
+
 
 }
 
@@ -250,6 +268,105 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/normal/"+r.Form["logname"][0], 302) // リダイレクト --- (*13)
 }
 
+
+// 書き込まれた内容を処理する
+func writelog_successionHandler(w http.ResponseWriter, r *http.Request) {
+	//クッキーを設定
+	//そのためにまずクッキーを取得
+	cookiecookie, err := r.Cookie("hoge")
+	if err != nil {
+		//log.Fatal("Cookie: ", err)
+		//クッキーが存在しなかった場合作成
+		rand.Seed(time.Now().UnixNano())
+		result := rand.Int() // ランダムな整数を生成します。
+		fmt.Println("らんすう" + strconv.Itoa(result))
+		cookie := &http.Cookie{
+			Name:  "hoge",
+			Value: strconv.Itoa(result),
+		}
+		http.SetCookie(w, cookie)
+	} else {
+		//クッキーは存在している
+		fmt.Println("くわー！")
+		fmt.Println(cookiecookie.Name)
+	}
+
+	r.ParseForm() // フォームを解析 --- (*10)
+
+	//lognameがlogのファイルの名前
+	//nameが入力内容
+	fmt.Print("いｄｓ" + r.Form["logname"][0] + "あｊｓｊ")
+	fmt.Print("いｄｓ" + r.Form["name"][0] + "あｊｓｊ")
+	//fmt.Print("saasasa" + r.URL.Path[1:] + "fefsf")
+
+	//現在のlogを取得する
+	var last string     //最後に入力された内容
+	var p []Log
+	if err := json.LoadFromPath("logs"+r.Form["logname"][0]+".json", &p); err == nil {
+		log := p[len(p)-1]
+		last = log.Name
+	} else {
+		fmt.Println("このjsonファイル開けないよ", err)
+		http.Redirect(w, r, "/succession/"+r.Form["logname"][0], 302)
+		return
+	}
+
+	//打ち込んだ文字と前回打ち込んだ文字とでしりとりになっているか
+	if last != "一番最初のlog" && last[len(last)-1] != r.Form["name"][0][0] {
+		http.Redirect(w, r, "/succession/"+r.Form["logname"][0], 302)
+		return
+	}
+
+	var search_flag bool
+	var result string
+
+	search_flag, result = searchDictionary(r.Form["name"][0])
+
+	//もし検索が発見できなかったら
+	if search_flag == false {
+		http.Redirect(w, r, "/succession/"+r.Form["logname"][0], 302)
+		return
+	}
+
+	fmt.Println(result)
+
+	fmt.Println("びびびびい")
+
+	//書き込まれた内容をjsonファイルに書き込む
+
+	//クッキーの取得を行う
+	cookiecookie2, err := r.Cookie("hoge")
+	if err != nil {
+		//log.Fatal("Cookie: ", err)
+		fmt.Println("クッキーが取得できない")
+		http.Redirect(w, r, "/succession/"+r.Form["logname"][0], 302)
+		return
+	}
+	v := cookiecookie2.Value
+
+	fmt.Println("かかかか" + v)
+
+	var log Log
+	log.Name = r.Form["name"][0]
+	log.Body = result
+	log.Kukki = v
+	if log.Name == "" {
+		log.Name = "名無し"
+	}
+
+	addLog(log, r.Form["logname"][0]) // 保存
+
+	score += 10
+
+	http.Redirect(w, r, "/succession/"+r.Form["logname"][0], 302) // リダイレクト --- (*13)
+}
+
+
+
+
+
+
+
 // gate用の書き込みフォーム
 func getFormGate() string {
 	return "<div><form action='/writegate' method='POST'>" +
@@ -278,6 +395,30 @@ func getFormLogs(logs []Log, namae string, user string) string {
 		//"</form></div><hr>"+"<script>var currentTime = new Date();setTimeout(function(){document.getElementById('sample').innerHTML=currentTime.getSeconds();},500);</script>"
 		" <script> setInterval(() => {var currentTime = new Date();document.getElementById('sample').innerHTML=currentTime.getSeconds();}, 500); </script>"
 }
+
+// logの内容を読み込んで表示する
+func getFormLogs_succession(logs []Log, namae string, user string) string {
+	//いままでユーザがしりとりで入力した文字数を数えて点数に保存
+	tensu := 0
+	for i := 0; i < len(logs); i++ {
+		if user == logs[i].Kukki {
+			tensu += len(logs[i].Name)
+		}
+	}
+
+	log := logs[len(logs)-1]
+	return "<div>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "  点数は" + strconv.Itoa(tensu) + "    </div>" +
+		"<div><form action='/writelog_succession' method='POST'>" +
+		"<input type='hidden' name='logname' value='" + namae + "'>" +
+		"名前: <input type='text' name='name'><br>" +
+		"<input type='submit' value='書込'>" +"<p id=sample></p>"+
+		//下記の部分をjsonの中を見て最後の入力を表示するようにしたい
+		//"</form></div><hr>"+"<script>var currentTime = new Date();setTimeout(function(){document.getElementById('sample').innerHTML=currentTime.getSeconds();},500);</script>"
+		" <script> setInterval(() => {var currentTime = new Date();document.getElementById('sample').innerHTML=currentTime.getSeconds();}, 500); </script>"
+}
+
+
+
 
 func addLog(log Log, namae string) {
 	var logs []Log
