@@ -105,26 +105,31 @@ func gateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//クッキーを取得
-	var user string //乱数で作成したユーザーの値を記憶
-	cookiecookie, err := r.Cookie("hoge")
-	if err != nil {
-		fmt.Println("クッキーは存在しない")
-	} else {
-		//クッキーは存在している
-		//fmt.Println("くわー！")
-		//fmt.Println(cookiecookie.Name)
-		user = cookiecookie.Value
-	}
 
-	var p []Log
-	if err := json.LoadFromPath("logs"+r.URL.Path[1:]+".json", &p); err == nil {
-		//fmt.Printf("%+v\n", p)
-		fmt.Println(score)
+	//  /normalだった場合
 
-		w.Write([]byte(getFormLogs(p, r.URL.Path[1:], user)))
-	} else {
-		fmt.Println("まだファイルないよ", err)
+	if r.URL.Path[1:7]=="normal"{
+		fmt.Println("のーまる")
+		//クッキーを取得
+		var user string //乱数で作成したユーザーの値を記憶
+		cookiecookie, err := r.Cookie("hoge")
+		if err != nil {
+			fmt.Println("クッキーは存在しない")
+		} else {
+			//クッキーは存在している
+			//fmt.Println("くわー！")
+			//fmt.Println(cookiecookie.Name)
+			user = cookiecookie.Value
+		}
+		var p []Log
+		if err := json.LoadFromPath("logs"+r.URL.Path[8:]+".json", &p); err == nil {
+			//fmt.Printf("%+v\n", p)
+			fmt.Println(score)
+
+			w.Write([]byte(getFormLogs(p, r.URL.Path[8:], user)))
+		} else {
+			fmt.Println("まだファイルないよ", err)
+		}
 	}
 
 }
@@ -186,13 +191,13 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 		lastUser = log.Kukki
 	} else {
 		fmt.Println("このjsonファイル開けないよ", err)
-		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		http.Redirect(w, r, "/normal/"+r.Form["logname"][0], 302)
 		return
 	}
 
 	//打ち込んだ文字と前回打ち込んだ文字とでしりとりになっているか
 	if last != "一番最初のlog" && last[len(last)-1] != r.Form["name"][0][0] {
-		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		http.Redirect(w, r, "/normal/"+r.Form["logname"][0], 302)
 		return
 	}
 
@@ -203,7 +208,7 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 
 	//もし検索が発見できなかったら
 	if search_flag == false {
-		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		http.Redirect(w, r, "/normal/"+r.Form["logname"][0], 302)
 		return
 	}
 
@@ -218,7 +223,7 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//log.Fatal("Cookie: ", err)
 		fmt.Println("クッキーが取得できない")
-		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		http.Redirect(w, r, "/normal/"+r.Form["logname"][0], 302)
 		return
 	}
 	v := cookiecookie2.Value
@@ -228,7 +233,7 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 	//最後に入力したユーザーが自分だった場合
 	if v == lastUser {
 		fmt.Println("しりとりは同じ人が二回連続では入力できない")
-		http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
+		http.Redirect(w, r, "/normal/"+r.Form["logname"][0], 302)
 		return
 	}
 
@@ -244,7 +249,7 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 
 	score += 10
 
-	http.Redirect(w, r, "/"+r.Form["logname"][0], 302) // リダイレクト --- (*13)
+	http.Redirect(w, r, "/normal/"+r.Form["logname"][0], 302) // リダイレクト --- (*13)
 }
 
 // gate用の書き込みフォーム
