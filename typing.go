@@ -169,8 +169,6 @@ func writelogHandler(w http.ResponseWriter, r *http.Request) {
 		//クッキーは存在している
 		fmt.Println("くわー！")
 		fmt.Println(cookiecookie.Name)
-		//http.Redirect(w, r, "/"+r.Form["logname"][0], 302)
-		//return
 	}
 
 	r.ParseForm() // フォームを解析 --- (*10)
