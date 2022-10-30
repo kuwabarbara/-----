@@ -492,10 +492,11 @@ func getFormLogs(logs []Log, namae string, user string) string {
 	}
 
 	log := logs[len(logs)-1]
-	return "<div>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "  点数は" + strconv.Itoa(tensu) + "    </div>" +
-			"<style>*::-webkit-input-placeholder {color: #fff;}*:-moz-placeholder {color: #fff;}*::-moz-placeholder {color: #fff;}*:-ms-input-placeholder {color: #fff;}	#containter {text-align: center;}h1 {color: #55acee;font-family: cursive;font-weight: bold;font-size: 72px;margin-top: 50px;}.textbox {margin-top: 50px;font-family: cursive;border: 1px solid #acacac;color: #fff;opacity: .7;border-radius: 10px;padding: 20px;text-align: center;width: 400px;transition: all .3s;-webkit-transition: all .3s;-moz-transition: all .3s;font-size: 16px;outline: none;background-color: #acacac;}	.textbox:focus {width: 500px;outline: none;}</style>	  <script>if (document.location.search.match(/type=embed/gi)) {window.parent.postMessage('resize', '*');}</script>"+
+	return 	"<style>*::-webkit-input-placeholder {color: #fff;}*:-moz-placeholder {color: #fff;}*::-moz-placeholder {color: #fff;}*:-ms-input-placeholder {color: #fff;}	#containter {text-align: center;}h1 {color: #55acee;font-family: cursive;font-weight: bold;font-size: 72px;margin-top: 50px;}.textbox {margin-top: 50px;font-family: cursive;border: 1px solid #acacac;color: #fff;opacity: .7;border-radius: 10px;padding: 20px;text-align: center;width: 400px;transition: all .3s;-webkit-transition: all .3s;-moz-transition: all .3s;font-size: 16px;outline: none;background-color: #acacac;}	.textbox:focus {width: 500px;outline: none;}</style>	  <script>if (document.location.search.match(/type=embed/gi)) {window.parent.postMessage('resize', '*');}</script>"+
 			"<div id='containter'>"+
-			"<h1>入力してね</h1>"+
+			//"<h1>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "  点数は" + strconv.Itoa(tensu) + "    </h1>" +
+			"<h1>" +"英語"+ log.Name + " 日本語" + log.Body + "  " + "  現在の点数は" + strconv.Itoa(tensu) + "    </h1>" +
+			"<h1>英単語を入力してね</h1>"+
 			"<form name='sampleform' method='POST' action='/writelog'>"+
 			"<input type='hidden' name='logname' value='" + namae + "'>" +
 			"<input class='textbox' type='text' name='name' placeholder='Search' onEnter='send()' autocomplete='off' maxlength='60'>"+
@@ -519,11 +520,11 @@ func getFormLogs_succession(logs []Log, namae string, user string) string {
 	}
 
 	log := logs[len(logs)-1]
-	return "<div>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "  点数は" + strconv.Itoa(tensu) + "    </div>" +
-			"<style>*::-webkit-input-placeholder {color: #fff;}*:-moz-placeholder {color: #fff;}*::-moz-placeholder {color: #fff;}*:-ms-input-placeholder {color: #fff;}	#containter {text-align: center;}h1 {color: #55acee;font-family: cursive;font-weight: bold;font-size: 72px;margin-top: 50px;}.textbox {margin-top: 50px;font-family: cursive;border: 1px solid #acacac;color: #fff;opacity: .7;border-radius: 10px;padding: 20px;text-align: center;width: 400px;transition: all .3s;-webkit-transition: all .3s;-moz-transition: all .3s;font-size: 16px;outline: none;background-color: #acacac;}	.textbox:focus {width: 500px;outline: none;}</style>"+
-			"<script>if (document.location.search.match(/type=embed/gi)) {window.parent.postMessage('resize', '*');}</script>"+
+	return "<style>*::-webkit-input-placeholder {color: #fff;}*:-moz-placeholder {color: #fff;}*::-moz-placeholder {color: #fff;}*:-ms-input-placeholder {color: #fff;}	#containter {text-align: center;}h1 {color: #55acee;font-family: cursive;font-weight: bold;font-size: 72px;margin-top: 50px;}.textbox {margin-top: 50px;font-family: cursive;border: 1px solid #acacac;color: #fff;opacity: .7;border-radius: 10px;padding: 20px;text-align: center;width: 400px;transition: all .3s;-webkit-transition: all .3s;-moz-transition: all .3s;font-size: 16px;outline: none;background-color: #acacac;}	.textbox:focus {width: 500px;outline: none;}</style>	  <script>if (document.location.search.match(/type=embed/gi)) {window.parent.postMessage('resize', '*');}</script>"+
 			"<div id='containter'>"+
-			"<h1>入力してね</h1>"+
+			//"<h1>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "  点数は" + strconv.Itoa(tensu) + "    </h1>" +
+			"<h1>" +"英語"+ log.Name + " 日本語" + log.Body + "  " + "  現在の点数は" + strconv.Itoa(tensu) + "    </h1>" +
+			"<h1>英単語を入力してね</h1>"+
 			"<form name='sampleform' method='POST' action='/writelog_succession'>"+
 			"<input type='hidden' name='logname' value='" + namae + "'>" +
 			"<input class='textbox' type='text' name='name' placeholder='Search' onEnter='send()' autocomplete='off' maxlength='60'>"+
@@ -551,10 +552,11 @@ func getFormLogs_limit(logs []Log, namae string, user string) string {
 	}
 
 	log := logs[len(logs)-1]
-	return "<div>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "  点数は" + strconv.Itoa(tensu) + "    </div>" +
-			"<style>*::-webkit-input-placeholder {color: #fff;}*:-moz-placeholder {color: #fff;}*::-moz-placeholder {color: #fff;}*:-ms-input-placeholder {color: #fff;}	#containter {text-align: center;}h1 {color: #55acee;font-family: cursive;font-weight: bold;font-size: 72px;margin-top: 50px;}.textbox {margin-top: 50px;font-family: cursive;border: 1px solid #acacac;color: #fff;opacity: .7;border-radius: 10px;padding: 20px;text-align: center;width: 400px;transition: all .3s;-webkit-transition: all .3s;-moz-transition: all .3s;font-size: 16px;outline: none;background-color: #acacac;}	.textbox:focus {width: 500px;outline: none;}</style>	  <script>if (document.location.search.match(/type=embed/gi)) {window.parent.postMessage('resize', '*');}</script>"+
+	return "<style>*::-webkit-input-placeholder {color: #fff;}*:-moz-placeholder {color: #fff;}*::-moz-placeholder {color: #fff;}*:-ms-input-placeholder {color: #fff;}	#containter {text-align: center;}h1 {color: #55acee;font-family: cursive;font-weight: bold;font-size: 72px;margin-top: 50px;}.textbox {margin-top: 50px;font-family: cursive;border: 1px solid #acacac;color: #fff;opacity: .7;border-radius: 10px;padding: 20px;text-align: center;width: 400px;transition: all .3s;-webkit-transition: all .3s;-moz-transition: all .3s;font-size: 16px;outline: none;background-color: #acacac;}	.textbox:focus {width: 500px;outline: none;}</style>	  <script>if (document.location.search.match(/type=embed/gi)) {window.parent.postMessage('resize', '*');}</script>"+
 			"<div id='containter'>"+
-			"<h1>入力してね</h1>"+
+			//"<h1>" + namae + "    " + log.Name + "   " + log.Body + "  " + strconv.Itoa(score) + "  点数は" + strconv.Itoa(tensu) + "    </h1>" +
+			"<h1>" +"英語"+ log.Name + " 日本語" + log.Body + "  " + "  現在の点数は" + strconv.Itoa(tensu) + "    </h1>" +
+			"<h1>英単語を入力してね</h1>"+
 			"<form  name='sampleform' method='POST' action='/writelog_limit'>"+
 			"<input type='hidden' name='logname' value='" + namae + "'>" +
 			"<input class='textbox' type='text' name='name' placeholder='Search' onEnter='send()' autocomplete='off' maxlength='60'>"+
