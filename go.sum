@@ -1,3 +1,5 @@
+github.com/takoyaki-3/go-binaryfile v0.0.0-20220722125739-ff41ff779425 h1:mdoUXbKVXxB/YpnpkgdZ7vnkgkA2jlY92CYi3a8pAlo=
+github.com/takoyaki-3/go-binaryfile v0.0.0-20220722125739-ff41ff779425/go.mod h1:gD6iobhQLG1MrxvyNt4Ex8X42PpEiDEO9b91k89DtL8=
 github.com/takoyaki-3/go-json v0.0.2 h1:IRG20KZUFt0ZnYikI6ob+/8cSjTA41rTaaA5cVAKKLo=
 github.com/takoyaki-3/go-json v0.0.2/go.mod h1:39fxS11XWIvygjbgeXg4bpyvAxLZ2lr1Cv+9DbbQ9Ew=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
