@@ -29,7 +29,7 @@ h1 {color: #55acee;font-family: cursive;font-weight: bold;font-size: 72px;margin
 <h1>英語 @Name@ 日本語 @Body@  現在の点数は @tensu@</h1>
 <h1>英単語を入力してね</h1>
 <form name='sampleform' method='POST' action='/writelog'>
-<input type='hidden' name='logname' value='" + namae + "'>
+<input type='hidden' name='logname' value='@namae@'>
 <input class='textbox' type='text' name='name' placeholder='Search' onEnter='send()' autocomplete='off' maxlength='60'>
 <script> document.sampleform.name.focus(); </script>
 </form>
@@ -37,7 +37,27 @@ h1 {color: #55acee;font-family: cursive;font-weight: bold;font-size: 72px;margin
 <p id="sample"></p>
 <script>
 
+  const namae = "@namae@";
+  let lastName = "";
+
   setInterval(() => {
+    const url = 'http://localhost:8888/getlastlog?room_id='+namae;
+    console.log(url);
+    fetch(url)
+    .then(function (data) {
+      return data.json();
+    })
+    .then(function (json) {
+      if (lastName == "") {
+        lastName = json[json.length-1].name
+      } else if (lastName != json[json.length-1].name) {
+        lastName = json[json.length-1].name
+        console.log(json[json.length-1].name)
+        console.log(json)
+        window.location.href = window.location.href
+      }
+    });
+
     var currentTime = new Date();
     document.getElementById('sample').innerHTML=currentTime.getSeconds();
   }, 500);

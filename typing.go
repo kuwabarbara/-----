@@ -45,6 +45,7 @@ func main() {
 
 	println("server - http://localhost:8888")
 	// URIに対応するハンドラを登録 --- (*4)
+	http.HandleFunc("/getlastlog", getLastLog)
 	http.HandleFunc("/", gateHandler)
 	http.HandleFunc("/writegate", writegateHandler)
 	http.HandleFunc("/writelog", writelogHandler)
@@ -91,6 +92,15 @@ func searchDictionary(name string) (bool, string) {
 	fmt.Println("見つからなかった")
 	return false, "入力した単語は検索できなかったな！"
 
+}
+
+func getLastLog(w http.ResponseWriter, r *http.Request){
+	roomID := r.URL.Query().Get("room_id")
+	var p []Log
+	fmt.Println("open ["+"logs"+roomID+".json]")
+	json.LoadFromPath("logs"+roomID+".json", &p)
+	s,_:=json.DumpToString(p)
+	w.Write([]byte(s))
 }
 
 // 最初の画面
@@ -504,6 +514,7 @@ func getFormLogs(logs []Log, namae string, user string) string {
 	html = strings.ReplaceAll(html,"@Name@", log.Name)
 	html = strings.ReplaceAll(html,"@tensu@", strconv.Itoa(tensu))
 	html = strings.ReplaceAll(html,"@Body@", log.Body)
+	html = strings.ReplaceAll(html,"@namae@", namae)
 
 	return html
 }
