@@ -481,11 +481,6 @@ func writelog_successionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 
-
-
-
-
-
 // gate用の書き込みフォーム
 func getFormGate() string {
 	return "<div><form action='/writegate' method='POST'>" +
